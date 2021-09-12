@@ -39,3 +39,4 @@ while(True):
 print("\n [INFO] Exiting Program and cleanup stuff")
 cam.release()
 cv2.destroyAllWindows()
+
