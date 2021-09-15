@@ -17,11 +17,43 @@ from email.mime.image import MIMEImage
 #GPIO.setup(18,GPIO.OUT)
 #p = GPIO.PWM(4,50)
 #p.start(7.5)
+#Email Variables
+SMTP_SERVER = 'smtp.gmail.com' #Email Server (don't change!)
+SMTP_PORT = 587 #Server Port (don't change!)
+GMAIL_USERNAME = 'vkwatra1703@gmail.com' #change this to match your gmail account
+GMAIL_PASSWORD = '######'  #change this to match your gmail password
 
-
-
-
-
+class Emailer:
+    def sendmail(self, recipient, subject, content, image):
+          
+        #Create Headers
+        emailData = MIMEMultipart()
+        emailData['Subject'] = subject
+        emailData['To'] = recipient
+        emailData['From'] = GMAIL_USERNAME
+ 
+        #Attach our text data  
+        emailData.attach(MIMEText(content))
+ 
+        #Create our Image Data from the defined image
+        imageData = MIMEImage(open(image, 'rb').read(), 'jpg') 
+        imageData.add_header('Content-Disposition', 'attachment; filename="image.jpg"')
+        emailData.attach(imageData)
+  
+        #Connect to Gmail Server
+        session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        session.ehlo()
+        session.starttls()
+        session.ehlo()
+  
+        #Login to Gmail
+        session.login(GMAIL_USERNAME, GMAIL_PASSWORD)
+  
+        #Send Email & Exit
+        session.sendmail(GMAIL_USERNAME, recipient, emailData.as_string())
+        session.quit
+  
+sender = Emailer()
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read('Trainer.yml')
 cascadePath = "haarcascade_frontalface_default.xml"
@@ -65,9 +97,20 @@ while True:
 
         id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
         cv2.imwrite("Storingfaces/Users."+time.ctime()+".jpg",gray[y:y+h,x:x+w])
-        confidence < 100
+        if (confidence < 100):
             id = names[id]
             confidence = "  {0}%".format(round(100 - confidence))
+        
+        else:
+            id = "unknown"
+            cv2.imwrite("denied/Denied.Unknown" + ".jpg", gray[y:y+h,x:x+w])
+            image = 'denied/Denied.Unknown.jpg'
+            sendTo = 'vansh.kwatra17@gmail.com'
+            emailSubject = "Unknown Person Detected!"
+            emailContent = "Person detected at: " + time.ctime()
+            sender.sendmail(sendTo, emailSubject, emailContent, image)
+            confidence = "  {0}%".format(round(100 - confidence))
+            r= requests.post('https://maker.ifttt.com/trigger/DETECT/with/key/dmOJvcQyMfI3pSU-cNBvv0')
         
       
         cv2.putText(img, str(id), (x+5,y-5), font, 1, (255,255,255), 2)
