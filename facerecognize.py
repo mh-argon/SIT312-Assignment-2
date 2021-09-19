@@ -101,16 +101,7 @@ while True:
             id = names[id]
             confidence = "  {0}%".format(round(100 - confidence))
         
-        else:
-            id = "unknown"
-            cv2.imwrite("denied/Denied.Unknown" + ".jpg", gray[y:y+h,x:x+w])
-            image = 'denied/Denied.Unknown.jpg'
-            sendTo = 'vansh.kwatra17@gmail.com'
-            emailSubject = "Unknown Person Detected!"
-            emailContent = "Person detected at: " + time.ctime()
-            sender.sendmail(sendTo, emailSubject, emailContent, image)
-            confidence = "  {0}%".format(round(100 - confidence))
-            r= requests.post('https://maker.ifttt.com/trigger/DETECT/with/key/dmOJvcQyMfI3pSU-cNBvv0')
+        
         
       
         cv2.putText(img, str(id), (x+5,y-5), font, 1, (255,255,255), 2)
