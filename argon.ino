@@ -18,6 +18,8 @@ int ledToggle(String command) {
 
     if (command=="gateopen") {
         digitalWrite(led1,HIGH);
+        delay(5000);
+        digitalWrite(led1,LOW);
         return 1;
     }
     else if (command=="gateclose") {
