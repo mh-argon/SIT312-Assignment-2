@@ -96,13 +96,13 @@ while True:
         cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
 
         id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
-        cv2.imwrite("Storingfaces/Users."+time.ctime()+".jpg",gray[y:y+h,x:x+w])
+        cv2.imwrite("Storingfaces/Users."+time.ctime()+".jpg",gray[y:y+h,x:x+w], [cv2.IMWRITE_PNG_COMPRESSION, 2])
         if (confidence < 100):
             id = names[id]
             confidence = "  {0}%".format(round(100 - confidence))
         else:
             id = "unknown"
-            cv2.imwrite("denied/Denied.Unknown" + ".jpg", gray[y:y+h,x:x+w])
+            cv2.imwrite("denied/Denied.Unknown" + ".jpg", gray[y:y+h,x:x+w], [cv2.IMWRITE_PNG_COMPRESSION, 2])
             image = 'denied/Denied.Unknown.jpg'
             sendTo = 'vansh.kwatra17@gmail.com'
             emailSubject = "Unknown Person Detected!"
